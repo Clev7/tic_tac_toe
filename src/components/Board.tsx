@@ -1,20 +1,9 @@
-"use client";
-
-import { IBoard } from "@/types";
+import { BoardState, IBoard } from "@/types";
 import { Square } from "./Square";
-import { useState } from "react";
 
-export function Board() {
+export function Board({ board, turn, onMove }: IBoard) {
 
-	const [board, setBoard] = useState([
-		"___",
-		"___",
-		"___"
-	]);
-
-	const [turn, setTurn] = useState("X");
-
-	function checkWin(board: IBoard) {
+	function checkWin(board: BoardState) {
 		function areEqual(...args: string[]) {
 			
 			// Underscores don't count :p
@@ -52,7 +41,7 @@ export function Board() {
 		return "Tie";
 	}
 
-	function handleClick(row: number, col: number) {
+	function makeMove(row: number, col: number) {
 		const potentialWinner = checkWin(board);
 
 		if (potentialWinner !== "Tie") {
@@ -68,8 +57,7 @@ export function Board() {
 
 		newBoard[row] = newBoard[row].substring(0, col) + turn + newBoard[row].substring(col + 1);
 
-		setBoard(newBoard);
-		setTurn(turn == "X" ? "O" : "X");
+		onMove(newBoard);
 	}
 
 	let res = [];
@@ -81,7 +69,7 @@ export function Board() {
 				value: board[r][c],
 				row: r,
 				col: c,
-				onSquareClick: () => handleClick(r, c)
+				onSquareClick: () => makeMove(r, c)
 			};
 
 			row.push(<Square key={`${r}-${c}`} {...props} />);
@@ -90,10 +78,10 @@ export function Board() {
 		res.push(<div key={r} className="board-row">{row}</div>);
 	}
 
-	let winner = checkWin(board);
-	console.log("winner: " + winner);
+	let status = checkWin(board);
+	console.log("winner: " + status);
 
-	if (winner === "Tie") {
+	if (status === "Tie") {
 		let hasEmpty = false;
 		for (let r = 0; r < 3; r++) {
 			for (let c = 0; c < 3; c++) {
@@ -106,15 +94,15 @@ export function Board() {
 			if (hasEmpty) break;
 		}
 
-		winner = hasEmpty ? "" : "Tie!";
+		status = hasEmpty ? `Turn: ${turn}` : "Tie!";
 	} else {
-		winner += " has won the game!";
+		status += " has won the game!";
 	}
 
 	return (
 		<>
+			<div className="status">{status}</div>
 			{res}
-			<div className="status">{winner}</div>
 		</>
 	);
 }

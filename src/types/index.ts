@@ -3,5 +3,10 @@ export interface ISquare {
 	onSquareClick: () => void
 }
 
-export type IBoard = string[]
+export type BoardState = string[]
 
+export interface IBoard {
+	board: BoardState,
+	turn: string,
+	onMove: (board: BoardState) => void
+}
