@@ -67,8 +67,6 @@ export function Board({ board, turn, onMove }: IBoard) {
 		for (let c = 0; c < 3; c++) {
 			let props = {
 				value: board[r][c],
-				row: r,
-				col: c,
 				onSquareClick: () => makeMove(r, c)
 			};
 

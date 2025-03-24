@@ -12,18 +12,24 @@ export default function Game() {
 	]]);
 
 	const [turn, setTurn] = useState("X");
-
-  const latest_board = boards[boards.length - 1];
+  const [currentMove, setCurrentMove] = useState(0);
 
   function handleMove(newBoard: BoardState) {
-    setBoards([...boards, newBoard]);
+    const updatedBoards = [...boards.slice(0, currentMove + 1), newBoard];
+    setBoards(updatedBoards);
     setTurn(turn === "X" ? "O" : "X");
+    setCurrentMove(updatedBoards.length - 1);
+  }
+  
+  function goToMove(idx: number) {
+    setCurrentMove(idx);
+    setTurn(idx % 2 == 0 ? "X" : "O");
   }
 
   return (
     <>
       <div className="board">
-        <Board board={latest_board} turn={turn} onMove={handleMove}/>
+        <Board board={boards[currentMove]} turn={turn} onMove={handleMove}/>
       </div>
       <div>
         <ol>
@@ -31,7 +37,7 @@ export default function Game() {
 
             return (
               <li key={idx}>
-                <button onClick={() => goToMove(idx)}>Go to move #{idx + 1}</button>
+                <button onClick={() => goToMove(idx)}>Go to move #{idx}</button>
               </li>
             );
           })}
